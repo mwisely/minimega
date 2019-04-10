@@ -64,17 +64,27 @@
         const vms = _.map(this.$store.state.vms, (vm) => {
           return {
             id: 'vm' + vm.id,  // Prefix with 'vm' to avoid collisions w/ VLANs
-            radius: this.nodeRadius,
-            fillStyle: 'blue',
+            radius: vm.tags.hasOwnProperty('size') ? vm.tags.size : this.nodeRadius,
+            fillStyle: vm.tags.hasOwnProperty('color') ? vm.tags.color : 'blue',
           };
         });
 
         // VLANs are red
         const vlans = _.map(this.$store.getters.vlans, (vlan) => {
+          /*var colorMap = new Map();
+          for ( i= 0; i < vlan.vms.length;i++){
+            if (vlan.vms[i].tags.hasOwnProperty(vlan.name)){
+              if (colorMap.has(vlan.vms[i].tags.color)){
+                colorMap.set(vlan.vms[i].tags.color,colorMap.get(vlan.vms[i].tags.color)+1)
+                continue
+              }
+              colorMap.set(vlan.vms[i].tags.color,1)
+            }
+          }*/
           return {
             id: 'vlan' + vlan.name,  // Prefix with 'vlan' to avoid collisions w/ VMs
-            radius: this.nodeRadius,
-            fillStyle: 'red',
+            radius: 2,
+            fillStyle: 'grey',
           };
         });
 
@@ -90,6 +100,7 @@
             return {
               source: 'vm' + vm.id,
               target: 'vlan' + vlan,
+              strokeStyle: vm.tags.hasOwnProperty(vlan) ? vm.tags.color : 'black',
             };
           });
         });
